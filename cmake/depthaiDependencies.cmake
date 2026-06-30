@@ -38,7 +38,13 @@ if(NOT CONFIG_MODE OR (CONFIG_MODE AND NOT DEPTHAI_SHARED_LIBS))
     # BZip2 (for bspatch)
     find_package(BZip2 ${_QUIET}  REQUIRED)
 
-    find_package(lz4 CONFIG REQUIRED)
+    find_package(lz4 CONFIG QUIET)
+    if(NOT TARGET lz4::lz4)
+        find_package(PkgConfig REQUIRED)
+        pkg_check_modules(LIBLZ4 REQUIRED IMPORTED_TARGET liblz4)
+        add_library(lz4::lz4 INTERFACE IMPORTED)
+        target_link_libraries(lz4::lz4 INTERFACE PkgConfig::LIBLZ4)
+    endif()
     # FP16 for conversions
     find_path(FP16_INCLUDE_DIR NAMES fp16.h)
 
@@ -47,7 +53,12 @@ if(NOT CONFIG_MODE OR (CONFIG_MODE AND NOT DEPTHAI_SHARED_LIBS))
     endif()
     # libarchive for firmware packages
     find_package(LibArchive ${_QUIET}  REQUIRED)
-    find_package(liblzma ${_QUIET} CONFIG REQUIRED)
+    find_package(LibLZMA ${_QUIET} REQUIRED)
+    # conda-forge liblzma-devel ships no config package, so FindLibLZMA creates
+    # LibLZMA::LibLZMA (capital) while depthai links against liblzma::liblzma (lowercase).
+    if(TARGET LibLZMA::LibLZMA AND NOT TARGET liblzma::liblzma)
+        add_library(liblzma::liblzma ALIAS LibLZMA::LibLZMA)
+    endif()
     # httplib for Gate communication
     find_package(httplib ${_QUIET} CONFIG REQUIRED)
     # ZLIB for compressing Apps
@@ -163,7 +174,13 @@ endif()
 
 if(DEPTHAI_ENABLE_MP4V2)
     # MP4V2 for video encoding
-    find_package(mp4v2 ${_QUIET} CONFIG REQUIRED)
+    find_package(mp4v2 CONFIG QUIET)
+    if(NOT TARGET mp4v2::mp4v2)
+        find_package(PkgConfig REQUIRED)
+        pkg_check_modules(MP4V2 REQUIRED IMPORTED_TARGET libmp4v2)
+        add_library(mp4v2::mp4v2 INTERFACE IMPORTED)
+        target_link_libraries(mp4v2::mp4v2 INTERFACE PkgConfig::MP4V2)
+    endif()
 endif()
 
 if(DEPTHAI_ENABLE_PROTOBUF)
@@ -181,7 +198,13 @@ set(BUILD_SHARED_LIBS OFF)
 set(XLINK_ENABLE_LIBUSB ${DEPTHAI_ENABLE_LIBUSB} CACHE BOOL "Enable libusb" FORCE)
 set(XLINK_INSTALL_PUBLIC_ONLY ON CACHE BOOL "Install only public headers" FORCE)
 if(DEPTHAI_ENABLE_LIBUSB)
-    find_package(usb-1.0 ${_QUIET} CONFIG REQUIRED)
+    find_package(usb-1.0 CONFIG QUIET)
+    if(NOT TARGET usb-1.0::usb-1.0)
+        find_package(PkgConfig REQUIRED)
+        pkg_check_modules(LIBUSB REQUIRED IMPORTED_TARGET libusb-1.0)
+        add_library(usb-1.0::usb-1.0 INTERFACE IMPORTED)
+        target_link_libraries(usb-1.0::usb-1.0 INTERFACE PkgConfig::LIBUSB)
+    endif()
 endif()
 if(DEPTHAI_XLINK_LOCAL AND (NOT CONFIG_MODE))
     add_subdirectory("${DEPTHAI_XLINK_LOCAL}" ${CMAKE_CURRENT_BINARY_DIR}/XLink)
