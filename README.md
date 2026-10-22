@@ -27,7 +27,7 @@ cmake --build build
 - CMake >= 3.20
 - C/C++17 compiler
 - [Linux] libudev >= 1.0.0
-- [optional] OpenCV 4 (required if building examples and for record and replay)
+- [optional] OpenCV >=4 (required if building examples and for record and replay)
 - [optional] PCL (required for point cloud example)
 
 To install libudev on Debian based systems (Ubuntu, etc.): `sudo apt install libudev-dev`

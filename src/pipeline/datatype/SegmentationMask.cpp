@@ -13,6 +13,11 @@
 #include "depthai/pipeline/datatype/ImgFrame.hpp"
 
 #ifdef DEPTHAI_HAVE_OPENCV_SUPPORT
+    #include <opencv2/core/version.hpp>
+    #include <opencv2/imgproc.hpp>
+    #if CV_VERSION_MAJOR >= 5
+        #include <opencv2/geometry.hpp>
+    #endif
     #include "utility/ErrorMacros.hpp"
 #endif
 

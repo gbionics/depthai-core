@@ -6,6 +6,12 @@
 #include "depthai/utility/ImageManipImpl.hpp"
 #define CATCH_CONFIG_MAIN
 
+#include <opencv2/core/version.hpp>
+#include <opencv2/imgproc.hpp>
+#if CV_VERSION_MAJOR >= 5
+    #include <opencv2/geometry.hpp>
+#endif
+
 #include <catch2/catch_all.hpp>
 #include <chrono>
 #include <iostream>
